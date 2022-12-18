@@ -42,19 +42,18 @@ func (w KafkaConfig) NewWriter() *kafka.Writer {
 	})
 }
 
-func (w KafkaConfig) Send() error {
+func (w KafkaConfig) Send(key string, message interface{}) error {
 	writer := *KafkaConfig.NewWriter(*&KafkaConfig{})
 	defer writer.Close()
 
-	data, _ := json.Marshal(w.Message)
+	data, _ := json.Marshal(message)
 	s := string(data)
 	s = strings.ReplaceAll(s, `\`, ``)
 
-	// // SEGMENTIO
-	// defer writer.Close()
+	// SEGMENTIO
 	msg := kafka.Message{
 		Topic: w.Topic,
-		Key:   []byte(w.Key),
+		Key:   []byte(key),
 		Value: data,
 	}
 	err := KafkaConfig.NewWriter(*&KafkaConfig{}).WriteMessages(context.Background(), msg)
