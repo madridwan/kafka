@@ -17,11 +17,6 @@ type KafkaConfig struct {
 	Message string
 }
 
-type SendMessage struct {
-	Close chan error
-	err   chan error
-}
-
 func (w KafkaConfig) NewReader() *kafka.Reader {
 	return kafka.NewReader(kafka.ReaderConfig{
 		Brokers: w.Brokers,
@@ -43,7 +38,7 @@ func (w KafkaConfig) NewWriter() *kafka.Writer {
 }
 
 func (w KafkaConfig) Send(key string, message interface{}) error {
-	writer := *KafkaConfig.NewWriter(*&KafkaConfig{})
+	writer := KafkaConfig.NewWriter(KafkaConfig{Brokers: w.Brokers, Topic: w.Topic})
 	defer writer.Close()
 
 	data, _ := json.Marshal(message)
@@ -56,7 +51,7 @@ func (w KafkaConfig) Send(key string, message interface{}) error {
 		Key:   []byte(key),
 		Value: data,
 	}
-	err := KafkaConfig.NewWriter(*&KafkaConfig{}).WriteMessages(context.Background(), msg)
+	err := writer.WriteMessages(context.Background(), msg)
 	if err != nil {
 		fmt.Println("fail produce kafka")
 	} else {
