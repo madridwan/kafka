@@ -13,8 +13,6 @@ type KafkaConfig struct {
 	Brokers []string
 	Topic   string
 	Group   string
-	Key     string
-	Message string
 }
 
 func (w KafkaConfig) NewReader() *kafka.Reader {
