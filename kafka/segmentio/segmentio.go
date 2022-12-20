@@ -54,8 +54,8 @@ func (w KafkaConfig) Send(key string, message interface{}) error {
 	err := writer.WriteMessages(context.Background(), msg)
 	if err != nil {
 		fmt.Println("fail produce kafka")
-	} else {
-		fmt.Println("produce kafka success")
+		return err
 	}
-	return err
+	fmt.Println("produce kafka success")
+	return nil
 }

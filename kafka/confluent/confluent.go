@@ -71,7 +71,7 @@ func (w KafkaConfig) NewConfluentWriter() *kafka.Producer {
 	return produce
 }
 
-func (w KafkaConfig) Send(key string, message interface{}) {
+func (w KafkaConfig) Send(key string, message interface{}) error {
 	fmt.Println(fmt.Sprintf("kafka url: %v", w.Brokers))
 	fmt.Println("kafka topic: " + w.Topic)
 	writer := KafkaConfig.NewConfluentWriter(KafkaConfig{
@@ -102,10 +102,11 @@ func (w KafkaConfig) Send(key string, message interface{}) {
 
 	if err != nil {
 		fmt.Println("fail produce kafka")
-	} else {
-		fmt.Println("produce kafka success")
+		return err
 	}
+	fmt.Println("produce kafka success")
 
 	flush, _ := strconv.Atoi(w.KafkaFlush)
 	writer.Flush(1 * flush)
+	return nil
 }
