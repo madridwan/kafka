@@ -15,11 +15,11 @@ type KafkaConfig struct {
 	Group   string
 }
 
-func (w KafkaConfig) NewReader() *kafka.Reader {
+func (r KafkaConfig) NewReader() *kafka.Reader {
 	return kafka.NewReader(kafka.ReaderConfig{
-		Brokers: w.Brokers,
-		Topic:   w.Topic,
-		GroupID: w.Group,
+		Brokers: r.Brokers,
+		Topic:   r.Topic,
+		GroupID: r.Group,
 		// MaxWait:     maxWait,
 		StartOffset: kafka.LastOffset,
 		MinBytes:    1,    // 1b
@@ -36,6 +36,8 @@ func (w KafkaConfig) NewWriter() *kafka.Writer {
 }
 
 func (w KafkaConfig) Send(key string, message interface{}) error {
+	fmt.Println(fmt.Sprintf("kafka url: %v", w.Brokers))
+	fmt.Println("kafka topic: " + w.Topic)
 	writer := KafkaConfig.NewWriter(KafkaConfig{Brokers: w.Brokers, Topic: w.Topic})
 	defer writer.Close()
 
